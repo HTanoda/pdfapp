@@ -2,7 +2,6 @@ import streamlit as st
 import openai
 import pdfreader
 from io import BytesIO
-from summarizer import Summarizer
 from transformers import pipeline
 
 openai.api_key = st.secrets.OpenAIAPI.openai_api_key
@@ -11,7 +10,7 @@ def read_pdf(file):
     text = ""
     file_buffer = BytesIO(file.getvalue())
     pdf = pdfreader.SimplePDFViewer(file_buffer)
-    num_pages = len(list(pdfreader.SimplePDFViewer(file_buffer).get_pages()))
+    num_pages = len(pdf.pages)
     for page in range(num_pages):
         pdf.navigate(page + 1)
         pdf.render()
@@ -19,8 +18,8 @@ def read_pdf(file):
     return text
 
 def summarize_text(text):
-    summarizer = Summarizer()
-    summary = summarizer(text)
+    summarizer = pipeline("summarization")
+    summary = summarizer(text, max_length=150, min_length=30, do_sample=False)[0]['summary_text']
     return summary
 
 def answer_question(question, context):
@@ -28,7 +27,7 @@ def answer_question(question, context):
     answer = response.choices[0].text.strip()
     return answer
 
-st.title("PDF 要約 and Q&A")
+st.title("PDF 要約 and Q&A Powered by GPT")
 uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
 if uploaded_file is not None:
     text = read_pdf(uploaded_file)
