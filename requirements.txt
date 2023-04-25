@@ -1,6 +1,6 @@
 streamlit==1.20.0
 openai
-pdfreader
+pdfplumber
 bert-extractive-summarizer
 transformers
 torch
