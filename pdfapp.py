@@ -1,6 +1,6 @@
 import streamlit as st
 import openai
-import pdfreader
+import pdfplumber
 from io import BytesIO
 from transformers import pipeline
 
@@ -8,13 +8,9 @@ openai.api_key = st.secrets.OpenAIAPI.openai_api_key
 
 def read_pdf(file):
     text = ""
-    file_buffer = BytesIO(file.getvalue())
-    pdf = pdfreader.SimplePDFViewer(file_buffer)
-    num_pages = len(pdf.pages)
-    for page in range(num_pages):
-        pdf.navigate(page + 1)
-        pdf.render()
-        text += " ".join(pdf.canvas.strings)
+    with pdfplumber.open(file) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text()
     return text
 
 def summarize_text(text):
