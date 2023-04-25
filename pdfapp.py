@@ -1,6 +1,7 @@
 import streamlit as st
 import openai
 import pdfreader
+from io import BytesIO
 from summarizer import Summarizer
 from transformers import pipeline
 
@@ -8,12 +9,12 @@ openai.api_key = st.secrets.OpenAIAPI.openai_api_key
 
 def read_pdf(file):
     text = ""
-    with open(file, "rb") as f:
-        pdf = pdfreader.SimplePDFViewer(f)
-        for page in range(len(pdf.pages())):
-            pdf.navigate(page + 1)
-            pdf.render()
-            text += " ".join(pdf.canvas.strings)
+    file_buffer = BytesIO(file.getvalue())
+    pdf = pdfreader.SimplePDFViewer(file_buffer)
+    for page in range(len(pdf.pages())):
+        pdf.navigate(page + 1)
+        pdf.render()
+        text += " ".join(pdf.canvas.strings)
     return text
 
 def summarize_text(text):
@@ -22,7 +23,7 @@ def summarize_text(text):
     return summary
 
 def answer_question(question, context):
-    response = openai.Completion.create(engine="gpt-3.5-turbo", prompt=f"{question}\n{context}\nAnswer:", max_tokens=50)
+    response = openai.Completion.create(engine="text-davinci-002", prompt=f"{question}\n{context}\nAnswer:", max_tokens=50)
     answer = response.choices[0].text.strip()
     return answer
 
