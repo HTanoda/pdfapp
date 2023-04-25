@@ -1,6 +1,6 @@
 streamlit==1.20.0
 openai
-PyPDF2
+pdfreader
 bert-extractive-summarizer
 transformers
 torch
