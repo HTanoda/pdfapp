@@ -1,7 +1,8 @@
 import os
 import openai
 import streamlit as st
-from PyPDF2 import PdfFileReader
+import langchain
+
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -15,7 +16,7 @@ os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
 
 def load_pdf(file):
     loader = PyPDFLoader(file)
-    documents = loader.load()
+    documents = loader.load_and_split()
 
 def process_documents(documents):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
