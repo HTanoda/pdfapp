@@ -11,12 +11,13 @@ from langchain.chains import VectorDBQA, RetrievalQA
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import TextLoader, PyPDFLoader
 from langchain import PromptTemplate
+from PyPDF2 import PdfReader
 
 os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
 
 def load_pdf(file):
-    pdf = PDFDocument(file)
-    documents = [page.text() for page in pdf.pages()]
+    pdf = PdfReader(file)
+    documents = [page.extract_text() for page in pdf.pages]
     return documents
 
 def process_documents(documents):
@@ -35,7 +36,7 @@ def ask_question(vectordb, question):
     answer = qa.ask(prompt.fill({"question": question}))
     return answer
 
-def generate_summary(documents, language):
+def generate_summary(vectordb, documents, language):
     summary_prompt = "この文書の要約を提供してください：\n\n{text}\n\n要約："
     
     summaries = []
@@ -56,7 +57,7 @@ if uploaded_file is not None:
     summary_language = st.selectbox("Select summary language:", ['Japanese', 'English'])
 
     with st.spinner('Generating summary...'):
-        summary = generate_summary(documents, summary_language)
+        summary = generate_summary(vectordb, documents, summary_language)
     st.subheader('Summary:')
     st.write(summary)
 
