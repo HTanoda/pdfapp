@@ -48,23 +48,3 @@ def generate_summary(documents, language):
 
 st.title('PDF Summary and Q&A')
 uploaded_file = st.file_uploader('Upload a PDF file', type=['pdf'])
-
-if uploaded_file is not None:
-    with st.spinner('Processing PDF...'):
-        documents = load_pdf(uploaded_file)
-        vectordb = process_documents(documents)
-    st.success('PDF processed.')
-
-    summary_language = st.selectbox("Select summary language:", ['Japanese', 'English'])
-
-    with st.spinner('Generating summary...'):
-        summary = generate_summary(documents, summary_language)
-    st.subheader('Summary:')
-    st.write(summary)
-
-    question = st.text_input('Ask a question about the document:')
-    if question:
-        with st.spinner('Generating answer...'):
-            answer = ask_question(vectordb, question)
-        st.write(answer)
-
