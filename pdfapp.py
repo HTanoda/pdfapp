@@ -22,7 +22,7 @@ def load_pdf(file):
 
 def process_documents(documents):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    texts = text_splitter.split_documents(documents)
+    texts = text_splitter.split(' '.join(documents))
     embeddings = OpenAIEmbeddings()
     vectordb = Chroma.from_documents(texts, embeddings)
     return vectordb
