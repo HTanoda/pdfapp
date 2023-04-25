@@ -1,6 +1,6 @@
 streamlit==1.20.0
-openai
-pdfplumber
-bert-extractive-summarizer
-transformers
-torch
+langchain==0.0.125
+openai==0.27.2
+chromadb==0.3.14
+pypdf==3.7.0
+tiktoken==0.3.3
