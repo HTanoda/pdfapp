@@ -18,7 +18,7 @@ loader = PyPDFLoader("/content/drive/MyDrive/福岡市地域防災計画（本�
 
 pages = loader.load_and_split()
 
-os.environ["OPENAI_API_KEY"] = '(Your API Key is here)'
+os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
 
