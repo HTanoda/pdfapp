@@ -15,12 +15,13 @@ from langchain import PromptTemplate
 os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
 
 def load_pdf(file):
-    loader = PyPDFLoader(file)
-    pages = loader.load_and_split()
+    pdf = PDFDocument(file)
+    documents = [page.text() for page in pdf.pages()]
+    return documents
 
-def process_documents(pages):
+def process_documents(documents):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    texts = text_splitter.split_documents(pages)
+    texts = text_splitter.split_documents(documents)
     embeddings = OpenAIEmbeddings()
     vectordb = Chroma.from_documents(texts, embeddings)
     return vectordb
@@ -34,11 +35,11 @@ def ask_question(vectordb, question):
     answer = qa.ask(prompt.fill({"question": question}))
     return answer
 
-def generate_summary(pages, language):
+def generate_summary(documents, language):
     summary_prompt = "この文書の要約を提供してください：\n\n{text}\n\n要約："
     
     summaries = []
-    for doc in pages:
+    for doc in documents:
         summary = ask_question(vectordb, summary_prompt.format(text=doc))
         summaries.append(summary)
     return '\n'.join(summaries)
