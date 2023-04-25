@@ -14,9 +14,8 @@ from langchain import PromptTemplate
 os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
 
 def load_pdf(file):
-    pdf_reader = PdfFileReader(file)
-    documents = [pdf_reader.getPage(i).extractText() for i in range(pdf_reader.getNumPages())]
-    return documents
+    loader = PyPDFLoader(file)
+    documents = loader.load()
 
 def process_documents(documents):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
